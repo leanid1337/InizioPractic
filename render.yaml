@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: google-serp-scraper
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: SEARCH_PROVIDER
+        value: serper
+      - key: SERPER_API_KEY
+        sync: false   # set the secret in the Render dashboard
+      - key: SEARCH_HL
+        value: cs
+      - key: SEARCH_GL
+        value: cz

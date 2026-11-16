@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    restart: unless-stopped
+
+  tests:
+    build:
+      context: .
+      target: test
+    # Tests never touch the network and need no secrets.
+    environment:
+      SEARCH_PROVIDER: scraper
+    profiles: ["test"]

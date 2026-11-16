@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google SERP Scraper</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
+    form { display: flex; gap: 8px; }
+    input { flex: 1; padding: 10px; font-size: 16px; }
+    button { padding: 10px 16px; font-size: 16px; }
+    .error { color: #b3261e; }
+    .downloads a { margin-right: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    td { padding: 8px; border-bottom: 1px solid #ddd; vertical-align: top; }
+    .url { color: #666; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Google SERP Scraper</h1>
+  <form id="form">
+    <input id="q" type="search" maxlength="200" placeholder="Zadejte klíčové slovo" required>
+    <button>Hledat</button>
+  </form>
+
+  <p id="status"></p>
+
+  <div id="results" hidden>
+    <p class="downloads">
+      <a id="json-link">Stáhnout JSON</a>
+      <a id="csv-link">Stáhnout CSV</a>
+    </p>
+    <table><tbody id="rows"></tbody></table>
+  </div>
+
+  <script>
+    const form = document.getElementById("form");
+    const input = document.getElementById("q");
+    const status = document.getElementById("status");
+    const results = document.getElementById("results");
+    const rows = document.getElementById("rows");
+
+    function showError(message) {
+      status.textContent = message;
+      status.className = "error";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const query = input.value.trim();
+      const url = "/api/search?q=" + encodeURIComponent(query);
+
+      results.hidden = true;
+      status.className = "";
+      status.textContent = "Hledám…";
+
+      try {
+        const response = await fetch(url + "&format=json");
+        const data = await response.json();
+        if (!response.ok) return showError(data.error);
+
+        rows.replaceChildren();
+        for (const r of data.results) {
+          const row = rows.insertRow();
+          row.insertCell().textContent = r.position;
+
+          const link = document.createElement("a");
+          link.href = r.url;
+          link.target = "_blank";
+          link.textContent = r.title;
+
+          const displayedUrl = document.createElement("div");
+          displayedUrl.className = "url";
+          displayedUrl.textContent = r.displayed_url;
+
+          row.insertCell().append(link, displayedUrl, r.snippet);
+        }
+
+        document.getElementById("json-link").href = url + "&format=json";
+        document.getElementById("csv-link").href = url + "&format=csv";
+        status.textContent = data.count + " výsledků pro „" + data.query + "“";
+        results.hidden = data.count === 0;
+      } catch {
+        showError("Požadavek selhal. Zkuste to znovu.");
+      }
+    });
+  </script>
+</body>
+</html>
