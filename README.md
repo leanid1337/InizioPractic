@@ -1,7 +1,6 @@
 # Google SERP Scraper
 
-[![tests](https://github.com/<OWNER>/<REPO>/actions/workflows/tests.yml/badge.svg)](https://github.com/<OWNER>/<REPO>/actions/workflows/tests.yml)
-
+[![tests](https://github.com/leanid1337/InizioPractic/actions/workflows/tests.yml/badge.svg)](https://github.com/leanid1337/InizioPractic/actions/workflows/tests.yml)
 A small web app: type a keyword phrase, get the **organic** results from Google page 1
 (no ads, featured snippets, "People also ask", maps, videos or knowledge panel), and
 download them as **JSON** or **CSV**.
